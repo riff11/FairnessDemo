@@ -22,27 +22,31 @@ public class Producer implements IProducer {
     
     @Override
     public synchronized void produce(Consumer consumer) {
-        System.out.println(consumer + " entered producer's lock");
-        synchronized (consumer) {
-            System.out.println(consumer + " is sending continue signal to next");
-            consumer.notify();
-        }
-        if (prevConsumer == null) {
-            System.out.println(consumer + " is waiting for continue flag");
-            while (!continueFlag) {
-                try {
-                    sleep(10);
-                } catch (InterruptedException ex) {
-                    Logger.getLogger(Producer.class.getName()).log(Level.SEVERE, null, ex);
-                }
+        
+        try {
+            System.out.println(consumer + " entered producer's lock");
+            synchronized (consumer) {
+//                System.out.println(consumer + " is sending continue signal to next");
+                consumer.notify();
             }
-            System.out.println("continue");
+            if (prevConsumer == null) {
+                System.out.println(consumer + " is waiting for continue flag");
+                while (!continueFlag) {
+                    try {
+                        sleep(10);
+                    } catch (InterruptedException ex) {
+                        Logger.getLogger(Producer.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+                System.out.println("continue");
+            }
+        else if (prevConsumer != consumer.getPrevConsumer()) {
+            throw new RuntimeException(consumer + ": порядок нарушен!!! Предыдущий: " + prevConsumer);
         }
-//        else if (prevConsumer != consumer.getPrevConsumer()) {
-//            prevConsumer = consumer;
-//            throw new RuntimeException(consumer + ": порядок нарушен!!! Предыдущий: " + prevConsumer);
-//        }
-        prevConsumer = consumer;
+        } finally {
+            prevConsumer = consumer;
+        }
+        
     }
 
     public boolean isContinueFlag() {

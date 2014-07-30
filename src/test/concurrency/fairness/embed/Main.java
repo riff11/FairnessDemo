@@ -17,7 +17,7 @@ import java.util.concurrent.TimeUnit;
  * @author igor
  */
 public class Main {
-    private static final int COUNT = 10;
+    private static final int COUNT = 100;
     private static final CountDownLatch latch = new CountDownLatch(COUNT);
     public static void main(String[] args) throws InterruptedException {
         Producer producer = new Producer();
@@ -28,7 +28,7 @@ public class Main {
             exec.execute(consumer);
         }
         latch.await();
-        Thread.sleep(1000);
+        Thread.sleep(100);
         producer.setContinueFlag(true);
         exec.awaitTermination(5, TimeUnit.SECONDS);
         exec.shutdownNow();
