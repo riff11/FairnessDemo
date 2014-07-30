@@ -23,7 +23,7 @@ public class Main {
         Producer producer = new Producer();
         Consumer consumer = null;
         ExecutorService exec = Executors.newCachedThreadPool();
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < COUNT; i++) {
             consumer = new Consumer(producer, consumer, latch);
             exec.execute(consumer);
         }
